@@ -1,0 +1,1 @@
+docker run --name kinol-psql -e POSTGRES_USER=kinol_user -e POSTGRES_PASSWORD=kinol_password -e POSTGRES_DB=kinol --restart=always -p 5455:5432 -d postgres:12.3
