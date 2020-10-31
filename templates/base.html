@@ -18,7 +18,7 @@
         const url = window.location.href;
         ['/index', '/movies', '/shows', '/rooms']
             .filter(path_part => url.includes(path_part))
-            .forEach(path_part => document.getElementById('lower-nav-bar-elements-' + path_part.replace('/','')).classList.add('is-active'))
+            .forEach(path_part => document.getElementById('lower-nav-bar-elements-' + path_part.replace('/', '')).classList.add('is-active'))
     });
 </script>
 <body>
@@ -32,11 +32,6 @@
                     <div class="navbar-end">
                         {% if current_user.is_authenticated %}
                             <span class="navbar-item">{{ current_user.first_name + ' ' + current_user.last_name }}</span>
-                        {% endif %}
-                        {% if current_user.is_authenticated %}
-                            <a href="{{ url_for('main.index') }}" class="navbar-item">
-                                Home
-                            </a>
                         {% endif %}
                         {% if not current_user.is_authenticated %}
                             <a href="{{ url_for('auth.login') }}" class="navbar-item">
@@ -66,10 +61,10 @@
             <nav class="tabs is-boxed is-fullwidth">
                 <div class="container">
                     <ul id="lower-nav-bar-elements">
-                        <li id="lower-nav-bar-elements-index" onclick="nav_redirect('index')"><a>Home</a></li>
-                        <li id="lower-nav-bar-elements-movies" onclick="nav_redirect('movies')"><a>Movies</a></li>
-                        <li id="lower-nav-bar-elements-shows" onclick="nav_redirect('shows')"><a>Shows</a></li>
-                        <li id="lower-nav-bar-elements-rooms" onclick="nav_redirect('rooms')"><a>Rooms</a></li>
+                        <li id="lower-nav-bar-elements-index" onclick="nav_redirect('/index')"><a>Home</a></li>
+                        <li id="lower-nav-bar-elements-movies" onclick="nav_redirect('/movies')"><a>Movies</a></li>
+                        <li id="lower-nav-bar-elements-shows" onclick="nav_redirect('/shows')"><a>Shows</a></li>
+                        <li id="lower-nav-bar-elements-rooms" onclick="nav_redirect('/rooms')"><a>Rooms</a></li>
                     </ul>
                 </div>
             </nav>

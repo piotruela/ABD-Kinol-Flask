@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
-from flask_login import login_user, logout_user
+from flask_login import login_user, logout_user, login_required
 
 from service import user_service
 
@@ -27,6 +27,7 @@ def login_post():
     return redirect(url_for('main.index'))
 
 
+@login_required
 @auth.route('/logout')
 def logout():
     logout_user()
