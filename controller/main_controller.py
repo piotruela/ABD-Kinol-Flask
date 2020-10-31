@@ -10,6 +10,7 @@ def index():
     return render_template('index.html')
 
 
+@login_required
 @main.route('/')
 def index_blank():
     return redirect('/index')

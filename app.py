@@ -29,10 +29,12 @@ if __name__ == 'app':
     Session = sessionmaker(bind=engine)
     Session.configure(bind=engine)
 
-    from controller.authentication import auth as auth_blueprint
+    from controller.authentication_controller import auth as auth_blueprint
     app.register_blueprint(auth_blueprint)
-    from controller.main import main as main_blueprint
+    from controller.main_controller import main as main_blueprint
     app.register_blueprint(main_blueprint)
+    from controller.movies_controller import movies as movies_blueprint
+    app.register_blueprint(movies_blueprint)
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'

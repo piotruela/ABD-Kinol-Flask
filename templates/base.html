@@ -18,7 +18,7 @@
         const url = window.location.href;
         ['/index', '/movies', '/shows', '/rooms']
             .filter(path_part => url.includes(path_part))
-            .forEach(path_part => document.getElementById('lower-nav-bar-elements-' + path_part.replace('/','')).classList.add('is-active'))
+            .forEach(path_part => document.getElementById('lower-nav-bar-elements-' + path_part.replace('/', '')).classList.add('is-active'))
     });
 </script>
 <body>
