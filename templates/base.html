@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Kinol</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"/>
+</head>
+
+<script>
+    function nav_redirect(page_name) {
+        window.location.href = page_name
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const url = window.location.href;
+        ['/index', '/movies', '/shows', '/rooms']
+            .filter(path_part => url.includes(path_part))
+            .forEach(path_part => document.getElementById('lower-nav-bar-elements-' + path_part.replace('/','')).classList.add('is-active'))
+    });
+</script>
+<body>
+<section class="hero is-light is-fullheight ">
+
+    <div class="hero-head">
+        <nav class="navbar">
+            <div class="container">
+
+                <div id="navbarMenuHeroA" class="navbar-menu">
+                    <div class="navbar-end">
+                        {% if current_user.is_authenticated %}
+                            <span class="navbar-item">{{ current_user.first_name + ' ' + current_user.last_name }}</span>
+                        {% endif %}
+                        {% if current_user.is_authenticated %}
+                            <a href="{{ url_for('main.index') }}" class="navbar-item">
+                                Home
+                            </a>
+                        {% endif %}
+                        {% if not current_user.is_authenticated %}
+                            <a href="{{ url_for('auth.login') }}" class="navbar-item">
+                                Login
+                            </a>
+                        {% endif %}
+                        {% if current_user.is_authenticated %}
+                            <a href="{{ url_for('auth.logout') }}" class="navbar-item">
+                                Logout
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+
+    {% if current_user.is_authenticated %}
+        <div class="hero-foot">
+            <nav class="tabs is-boxed is-fullwidth">
+                <div class="container">
+                    <ul id="lower-nav-bar-elements">
+                        <li id="lower-nav-bar-elements-index" onclick="nav_redirect('index')"><a>Home</a></li>
+                        <li id="lower-nav-bar-elements-movies" onclick="nav_redirect('movies')"><a>Movies</a></li>
+                        <li id="lower-nav-bar-elements-shows" onclick="nav_redirect('shows')"><a>Shows</a></li>
+                        <li id="lower-nav-bar-elements-rooms" onclick="nav_redirect('rooms')"><a>Rooms</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    {% endif %}
+</section>
+</body>
+</html>

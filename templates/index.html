@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="column is-4 is-offset-4">
+
+        <div class="box">
+            <span>
+                Kinol system - currently logged as {{ current_user.first_name + ' ' + current_user.last_name }}
+            </span>
+
+        </div>
+    </div>
+{% endblock %}
