@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <script>
+        $(function () {
+            $('#list-shows-datetimepicker').datetimepicker(
+                {
+                    format: 'YYYY-MM-DD',
+                    defaultDate: new Date({{ for_date.year }}, {{ (for_date.month - 1) }}, {{ for_date.day }})
+                }
+            );
+            $("#list-shows-datetimepicker").on("dp.change", function (e) {
+                let date = e.date._d;
+                var formatted_date = date.toLocaleDateString('zh-Hans-CN', {
+                    month: '2-digit',
+                    day: '2-digit',
+                    year: 'numeric'
+                }).replaceAll("/", "-");
+                window.location.href = `/shows?for_date=${formatted_date}`
+            });
+
+        });
+    </script>
+
+    <div class="column is-4 is-offset-4">
+        <div class="form-group is-4">
+            <div class='input-group date' id="list-shows-datetimepicker">
+                <input type='text' class="form-control" name="date_time"/>
+                <span class="input-group-addon"><span
+                        class="glyphicon glyphicon-calendar"></span>
+                                </span>
+            </div>
+        </div>
+
+    </div>
+
+    <nav class="level">
+        <div class="level-left"></div>
+        <div class="level-right">
+            <p class="level-item"><a class="button is-dark" style="width: 50px"
+                                     onclick="window.location='/shows/create'">+</a></p>
+        </div>
+    </nav>
+
+    <div style="margin: 10%"></div>
+
+    <div class="tile is-ancestor is-widescreen">
+        <div class="tile is-vertical">
+
+            {% for show in shows %}
+                <div class="tile">
+                    <div class="tile is-parent">
+                        <div class="tile is-child notification is-12">
+                            <p class="title"><b>{{ show.movie.title }}</b></p>
+                        </div>
+                    </div>
+                    <div class="tile is-parent">
+                        <div class="tile is-child notification is-10">
+                            <p class="title">Room No. {{ show.room.number }}</p>
+                        </div>
+                    </div>
+
+                    <div class="tile is-parent">
+                        <div class="tile is-child notification is-10">
+                            <p class="title">at {{ show.show_date.strftime('%H:%M') }}</p>
+                        </div>
+                    </div>
+                    <div class="tile is-parent">
+                        <div class="tile is-child notification is-12">
+                            <p class="title">{{ show.left_tickets }} left from {{ show.room.capacity }} sits</p>
+                        </div>
+                    </div>
+                    <div class="tile is-parent">
+                        <div class="tile is-child notification is-2">
+                            <button class="button is-dark" onclick="nav_redirect('/shows/' + {{ show.id }})">go</button>
+                        </div>
+                    </div>
+                </div>
+
+            {% endfor %}
+        </div>
+
+    </div>
+
+{% endblock %}

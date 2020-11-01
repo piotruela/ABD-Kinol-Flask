@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <script>
+        $(function () {
+            $('#create-show-datetimepicker').datetimepicker(
+                {
+                    format: 'YYYY-MM-DD HH:mm',
+                    defaultDate: new Date()
+                }
+            );
+        });
+    </script>
+
+    <div class="column is-4 is-offset-4">
+        <h3 class="title">Show</h3>
+        <div class="box">
+
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="notification is-danger">
+                        {{ messages[0] }}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="/shows/create">
+                <div class="field">
+                    <div class="control">
+                        <select class="input is-large" name="movie" style="margin-bottom: 10px" autofocus="">
+                            <option label=""></option>
+                            {% for movie in movies %}
+                                <option value="{{ movie.id }}">{{ movie.title }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <select class="input is-large" name="room" style="margin-bottom: 10px">
+                            <option label=""></option>
+                            {% for room in rooms %}
+                                <option value="{{ room.id }}">No. {{ room.number }} ({{ room.capacity }} sits)</option>
+                            {% endfor %}
+                        </select>
+
+                        <div class="form-group">
+                            <div class='input-group date' id="create-show-datetimepicker">
+                                <input type='text' class="form-control" name="date_time"/>
+                                <span class="input-group-addon"><span
+                                        class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="button is-block is-dark is-large is-fullwidth">Create</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
