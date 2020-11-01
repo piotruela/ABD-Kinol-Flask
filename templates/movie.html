@@ -22,30 +22,75 @@
                 </div>
                 <div class="field">
                     <div class="control">
-                        <input class="input is-large" type="text" name="genre" placeholder="Genre" value="{{ movie.genre }}">
+                        <input class="input is-large" type="text" name="genre" placeholder="Genre"
+                               value="{{ movie.genre }}">
                     </div>
                 </div>
                 <div class="field">
                     <div class="control">
-                        <input class="input is-large" type="number" name="minimum_age" placeholder="Minimum age" value="{{ movie.minimum_age }}">
+                        <input class="input is-large" type="number" name="minimum_age" placeholder="Minimum age"
+                               value="{{ movie.minimum_age }}">
                     </div>
                 </div>
                 <div class="field">
                     <div class="control">
-                        <input class="input is-large" type="number" name="length_minutes" placeholder="Length (minutes)" value="{{ movie.length_minutes }}">
+                        <input class="input is-large" type="number" name="length_minutes" placeholder="Length (minutes)"
+                               value="{{ movie.length_minutes }}">
                     </div>
                 </div>
                 <div class="field">
                     <div class="control">
-                        <textarea class="input is-large textarea" name="description" placeholder="Description" >{{ movie.describe }}</textarea>
+                        <textarea class="input is-large textarea" name="description"
+                                  placeholder="Description">{{ movie.describe }}</textarea>
                     </div>
                 </div>
 
                 <button class="button is-block is-dark is-large is-fullwidth">Update</button>
             </form>
-        <form method="POST" action="/movies/delete/{{ movie.id }}">
-            <button style="margin-top: 5px" class="button is-block is-danger is-large is-fullwidth">Delete</button>
-        </form>
+            <form method="POST" action="/movies/delete/{{ movie.id }}">
+                <button style="margin-top: 5px" class="button is-block is-danger is-large is-fullwidth">Delete</button>
+            </form>
         </div>
+    </div>
+
+    <h3 class="title">Upcoming shows</h3>
+
+
+    <div class="tile is-ancestor is-widescreen">
+        <div class="tile is-vertical">
+
+            {% for show in upcoming_shows %}
+                <div class="tile">
+                    <div class="tile is-parent">
+                        <div class="tile is-child notification is-12">
+                            <p class="title"><b>{{ show.movie.title }}</b></p>
+                        </div>
+                    </div>
+                    <div class="tile is-parent">
+                        <div class="tile is-child notification is-10">
+                            <p class="title">Room No. {{ show.room.number }}</p>
+                        </div>
+                    </div>
+
+                    <div class="tile is-parent">
+                        <div class="tile is-child notification is-10">
+                            <p class="title">at {{ show.show_date.strftime('%H:%M') }}</p>
+                        </div>
+                    </div>
+                    <div class="tile is-parent">
+                        <div class="tile is-child notification is-12">
+                            <p class="title">{{ show.left_tickets }} left from {{ show.room.capacity }} sits</p>
+                        </div>
+                    </div>
+                    <div class="tile is-parent">
+                        <div class="tile is-child notification is-2">
+                            <button class="button is-dark" onclick="nav_redirect('/shows/' + {{ show.id }})">go</button>
+                        </div>
+                    </div>
+                </div>
+
+            {% endfor %}
+        </div>
+
     </div>
 {% endblock %}

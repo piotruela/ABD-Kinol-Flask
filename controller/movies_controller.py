@@ -1,7 +1,8 @@
 from flask import render_template, Blueprint, request, redirect, url_for
 from flask_login import login_required
 
-from service import movie_service
+from app import Session
+from service import movie_service, show_service, ticket_service
 
 movies = Blueprint('movies', __name__)
 
@@ -12,12 +13,16 @@ def get_movies():
     movies_list = movie_service.get_movies()
     return render_template('movies.html', movies=movies_list)
 
-#todo powinna byc jeszcze lista seansow dotyczaca filmu
+
 @movies.route('/movies/<movie_id>')
 @login_required
 def get_movie(movie_id):
-    movie = movie_service.get_movie(movie_id)
-    return render_template('movie.html', movie=movie)
+    session = Session()
+    movie = movie_service.get_movie(movie_id, session=session)
+    upcoming_shows = show_service.get_upcoming_shows(movie, session=session)
+    for show in upcoming_shows:
+        show.left_tickets = ticket_service.count_left(show, session=session)
+    return render_template('movie.html', movie=movie, upcoming_shows=upcoming_shows)
 
 
 @movies.route('/movies/create')

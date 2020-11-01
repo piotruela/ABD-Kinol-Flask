@@ -14,9 +14,10 @@ shows = Blueprint('shows', __name__)
 def get_shows():
     date_str = request.args.get('for_date') or datetime.datetime.now().date().__str__()
     date = datetime.datetime.strptime(date_str, '%Y-%m-%d').date()
-    shows_list = show_service.get_shows(date)
+    session = Session()
+    shows_list = show_service.get_shows(date, session=session)
     for show in shows_list:
-        show.left_tickets = ticket_service.count_left(show)
+        show.left_tickets = ticket_service.count_left(show, session=session)
     return render_template('shows.html', shows=shows_list, for_date=date)
 
 

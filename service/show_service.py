@@ -8,8 +8,7 @@ from entity.show import Show
 from service import movie_service, room_service
 
 
-def get_shows(date: datetime.date) -> List[Show]:
-    session = Session()
+def get_shows(date: datetime.date, session=Session()) -> List[Show]:
     date_time_start = datetime.combine(date, datetime.min.time())
     date_time_end = datetime.combine(date, datetime.max.time())
     return session.query(Show).filter(and_(Show.show_date.between(date_time_start, date_time_end))).all()
@@ -44,3 +43,9 @@ def update(show_id, movie_id, room_id, date_time):
     show.movie = movie_service.get_movie(movie_id, session)
     session.commit()
     return show
+
+
+def get_upcoming_shows(movie, session):
+    date_time_start = datetime.combine(datetime.now().date(), datetime.min.time())
+    return session.query(Show).filter(
+        and_(Show.show_date.between(date_time_start, datetime.max), Show.movie_id == movie.id)).all()
