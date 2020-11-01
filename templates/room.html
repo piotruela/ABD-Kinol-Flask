@@ -2,34 +2,98 @@
 
 {% block content %}
     <script>
+
+        let final_element_dimension_px = 0;
+        let final_margin_px = 3;
+
         document.addEventListener("DOMContentLoaded", function () {
+            createRoomSitsView()
+            paintExistingRoomSits()
+            paintLegend()
+        });
+
+        function createRoomSitsView() {
             const room_columns = ({{ room.columns }})
+            const room_columns_with_pre_column = room_columns + 1
             const room_rows = ({{ room.rows }})
-            const margin_px = 3
-            const element_dimension_px = Math.min((window.innerWidth / room_columns) - (room_columns * margin_px), 100)
-            const grid_container = document.getElementById("room-grid-container");
-            grid_container.style.gridTemplateColumns = `repeat(${room_columns}, 1fr)`
-            grid_container.style.width = `${(element_dimension_px + margin_px) * room_columns}px`
+            const max_element_dimension_px = 40
+            const element_dimension_px = Math.min((window.innerWidth / room_columns_with_pre_column) - (room_columns_with_pre_column * final_margin_px), max_element_dimension_px)
+            final_element_dimension_px = element_dimension_px
+            const grid_container = document.getElementById("room-grid-container")
+            grid_container.style.gridTemplateColumns = `repeat(${room_columns_with_pre_column}, 1fr)`
+            grid_container.style.width = `${(element_dimension_px + final_margin_px) * room_columns_with_pre_column}px`
             while (parent.firstChild) {
                 parent.firstChild.remove()
             }
 
+
             for (let row = 0; row < room_rows; row++) {
+                const pre_row_grid_element = createBaseGridRoomElement(row + 1, 0, element_dimension_px)
+                pre_row_grid_element.innerText = `no. ${row + 1}`
+                grid_container.appendChild(pre_row_grid_element)
                 for (let column = 0; column < room_columns; column++) {
-                    const room_grid_element = document.createElement('div');
-                    room_grid_element.innerText = ''
-                    room_grid_element.style.width = `${element_dimension_px}px`
-                    room_grid_element.style.height = `${element_dimension_px}px`
-                    room_grid_element.style.margin = `${margin_px}px`
-                    room_grid_element.classList.add('room-grid-element')
+                    const room_grid_element = createBaseGridRoomElement(row + 1, column + 1)
+                    room_grid_element.sitIterator = `${column + 1}`
                     grid_container.appendChild(room_grid_element)
                 }
             }
-        });
+        }
+
+        function createBaseGridRoomElement(row, column, element_dimension_px) {
+            const room_grid_element = document.createElement('div')
+            room_grid_element.innerText = ''
+            room_grid_element.style.width = `${element_dimension_px}px`
+            room_grid_element.style.height = `${element_dimension_px}px`
+            room_grid_element.style.margin = `${final_margin_px}px`
+            room_grid_element.id = `room-grid-container-element-${row}-${column}`
+            return room_grid_element
+        }
+
+        function decorateGridRoomElementSit(room_grid_element) {
+            room_grid_element.style.backgroundColor = "#363636"
+            room_grid_element.style.border = "1px solid blue"
+            room_grid_element.style.color = "white"
+            room_grid_element.innerText = room_grid_element.sitIterator
+        }
+
+        function paintExistingRoomSits() {
+            {% for sit in sits %}
+                var row = ({{ sit.row }})
+                var column = ({{ sit.sit }})
+                var room_grid_sit = document.getElementById(`room-grid-container-element-${row}-${column}`)
+                decorateGridRoomElementSit(room_grid_sit)
+
+            {% endfor %}
+        }
+
+        function paintLegend() {
+            const legend_div = document.getElementById("room-legend");
+            const legend_sit_taken = createBaseGridRoomElement(99, 99, final_element_dimension_px);
+            decorateGridRoomElementSit(legend_sit_taken)
+            legend_sit_taken.innerText = 'X'
+            legend_sit_taken.style.marginLeft = 'auto'
+            legend_sit_taken.style.marginRight = 'auto'
+            legend_sit_taken.style.position = 'relative'
+            legend_div.appendChild(legend_sit_taken)
+            const legend_sit_taken_description = document.createElement('div')
+            legend_sit_taken_description.style.position = 'relative'
+            legend_sit_taken_description.innerText = ' - means that sit is available to reserve during buying ticket and sit num will be X'
+            legend_sit_taken_description.style.color = 'black'
+            legend_sit_taken_description.style.marginLeft = "0px"
+            legend_sit_taken_description.style.marginRight = "0px"
+            legend_sit_taken_description.style.padding = "0px"
+            legend_sit_taken_description.style.left = '-50px'
+            legend_sit_taken_description.style.bottom = '12px'
+            legend_sit_taken_description.style.width = '700px'
+            legend_sit_taken.appendChild(legend_sit_taken_description)
+        }
     </script>
     <div class="column is-fullwidth">
         <div class="box">
             <div id="room-grid-container">
+            </div>
+            <div style="height: 100px"></div>
+            <div style="width: 500px; margin-left: auto; margin-right: auto" id="room-legend">
             </div>
         </div>
     </div>
@@ -44,26 +108,27 @@
                     </div>
                 {% endif %}
             {% endwith %}
-
-            <form method="POST" action="/rooms/update/{{ room.id }}">
-                <div class="field">
-                    <div class="control">
-                        <input class="input is-large" type="text" maxlength="35" name="number" placeholder="number"
-                               autofocus="" value="{{ room.number }}">
-                    </div>
+            <div class="field">
+                <div class="control">
+                    <input class="input is-large" type="text" maxlength="35" name="number" placeholder="number"
+                           autofocus="" readonly="readonly" value="{{ room.number }}">
                 </div>
-                <div class="field">
-                    <div class="control">
-                        <input class="input is-large" type="text" maxlength="35" name="capacity" placeholder="capacity"
-                               readonly="readonly"
-                               autofocus="" value="Capacity: {{ room.capacity }} sits">
-                    </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                    <input class="input is-large" type="text" maxlength="35" name="capacity" placeholder="capacity"
+                           readonly="readonly"
+                           autofocus="" value="Capacity: {{ room.capacity }} sits">
                 </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                    <input class="input is-large" type="text" maxlength="35" name="capacity" placeholder="capacity"
+                           readonly="readonly"
+                           autofocus="" value="Dimensions: {{ room.rows }} x {{ room.columns }}">
+                </div>
+            </div>
 
-                <button class="button is-block is-dark is-large is-fullwidth">Update</button>
-
-
-            </form>
             <form method="POST" action="/rooms/delete/{{ room.id }}">
                 <button style="margin-top: 5px" class="button is-block is-danger is-large is-fullwidth">Delete</button>
             </form>

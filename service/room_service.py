@@ -18,14 +18,6 @@ def create(number):
     return room
 
 
-def update(room_id, number):
-    session = Session()
-    room = get_room(room_id, session)
-    room.number = number
-    session.commit()
-    return room
-
-
 def delete(room_id):
     session = Session()
     room = get_room(room_id, session)
