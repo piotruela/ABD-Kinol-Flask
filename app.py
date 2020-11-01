@@ -36,6 +36,9 @@ if __name__ == 'app':
     app.register_blueprint(movies_blueprint)
     from controller.shows_controller import shows as shows_blueprint
     app.register_blueprint(shows_blueprint)
+    from controller.rooms_controller import rooms as rooms_blueprint
+    app.register_blueprint(rooms_blueprint)
+
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'

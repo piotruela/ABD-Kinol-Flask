@@ -19,7 +19,7 @@ def get_movies():
 def get_movie(movie_id):
     session = Session()
     movie = movie_service.get_movie(movie_id, session=session)
-    upcoming_shows = show_service.get_upcoming_shows(movie, session=session)
+    upcoming_shows = show_service.get_upcoming_shows_by_movie(movie, session=session)
     for show in upcoming_shows:
         show.left_tickets = ticket_service.count_left(show, session=session)
     return render_template('movie.html', movie=movie, upcoming_shows=upcoming_shows)
