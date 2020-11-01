@@ -4,8 +4,7 @@ from app import Session
 from entity.movie import Movie
 
 
-def get_movies() -> List[Movie]:
-    session = Session()
+def get_movies(session=Session()) -> List[Movie]:
     return session.query(Movie).all()
 
 
@@ -18,8 +17,7 @@ def create(title, minimum_age, genre, length_minutes, description):
     return movie
 
 
-def get_movie(movie_id):
-    session = Session()
+def get_movie(movie_id, session=Session()):
     return session.query(Movie).filter_by(id=movie_id).first()
 
 
@@ -32,7 +30,7 @@ def delete(movie_id):
 
 def update(movie_id, title, minimum_age, genre, length_minutes, description):
     session = Session()
-    movie = session.query(Movie).filter_by(id=movie_id).first()
+    movie = get_movie(movie_id, session)
     movie.title = title
     movie.minimum_age = minimum_age
     movie.genre = genre

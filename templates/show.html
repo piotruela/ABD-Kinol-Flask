@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <script>
+        $(function () {
+            $('#shows-datetimepicker').datetimepicker(
+                {
+                    format: 'YYYY-MM-DD HH:mm',
+                    defaultDate: new Date({{show.show_date.year}}, {{show.show_date.month}}-1, {{show.show_date.day}}, {{show.show_date.hour}}, {{show.show_date.minute}})
+                }
+            );
+        });
+    </script>
+    <div class="column is-4 is-offset-4">
+        <h3 class="title">Show "{{ show.movie.title }}"</h3>
+        <div class="box">
+
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="notification is-danger">
+                        {{ messages[0] }}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="/shows/update/{{ show.id }}">
+                <div class="field">
+                    <div class="control">
+                        <select class="input is-large" name="movie" style="margin-bottom: 10px" autofocus="">
+                            {% for movie in movies %}
+                                {% if movie.id == show.movie.id %}
+                                    <option selected="selected" value="{{ movie.id }}">{{ movie.title }}</option>
+                                {% else %}
+                                    <option value="{{ movie.id }}">{{ movie.title }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+
+                        <select class="input is-large" style="margin-bottom: 10px" name="room">
+                            {% for room in rooms %}
+                                {% if room.id == show.room.id %}
+                                    <option selected="selected" value="{{ room.id }}">No. {{ room.number }} ({{ room.capacity }} sits)</option>
+                                {% else %}
+                                    <option value="{{ room.id }}">No. {{ room.number }} ({{ room.capacity }} sits)</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+
+                        <div class="form-group">
+                            <div class='input-group date' id="shows-datetimepicker">
+                                <input type='text' class="form-control" name="date_time"/>
+                                <span class="input-group-addon"><span
+                                        class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <button class="button is-block is-dark is-large is-fullwidth">Update</button>
+            </form>
+            <form method="POST" action="/shows/delete/{{ show.id }}">
+                <button style="margin-top: 5px" class="button is-block is-danger is-large is-fullwidth">Delete</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

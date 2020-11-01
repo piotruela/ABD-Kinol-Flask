@@ -24,7 +24,6 @@ if __name__ == 'app':
     engine = create_engine('postgresql://kinol_user:kinol_password@localhost:5455/kinol', echo=True)
 
     app.config['SECRET_KEY'] = 'a2193hXC87g'
-
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
     Session.configure(bind=engine)
@@ -35,6 +34,8 @@ if __name__ == 'app':
     app.register_blueprint(main_blueprint)
     from controller.movies_controller import movies as movies_blueprint
     app.register_blueprint(movies_blueprint)
+    from controller.shows_controller import shows as shows_blueprint
+    app.register_blueprint(shows_blueprint)
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
