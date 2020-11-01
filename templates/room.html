@@ -1,6 +1,38 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const room_columns = ({{ room.columns }})
+            const room_rows = ({{ room.rows }})
+            const margin_px = 3
+            const element_dimension_px = Math.min((window.innerWidth / room_columns) - (room_columns * margin_px), 100)
+            const grid_container = document.getElementById("room-grid-container");
+            grid_container.style.gridTemplateColumns = `repeat(${room_columns}, 1fr)`
+            grid_container.style.width = `${(element_dimension_px + margin_px) * room_columns}px`
+            while (parent.firstChild) {
+                parent.firstChild.remove()
+            }
+
+            for (let row = 0; row < room_rows; row++) {
+                for (let column = 0; column < room_columns; column++) {
+                    const room_grid_element = document.createElement('div');
+                    room_grid_element.innerText = ''
+                    room_grid_element.style.width = `${element_dimension_px}px`
+                    room_grid_element.style.height = `${element_dimension_px}px`
+                    room_grid_element.style.margin = `${margin_px}px`
+                    room_grid_element.classList.add('room-grid-element')
+                    grid_container.appendChild(room_grid_element)
+                }
+            }
+        });
+    </script>
+    <div class="column is-fullwidth">
+        <div class="box">
+            <div id="room-grid-container">
+            </div>
+        </div>
+    </div>
     <div class="column is-4 is-offset-4">
         <h3 class="title">Room</h3>
         <div class="box">
@@ -22,12 +54,15 @@
                 </div>
                 <div class="field">
                     <div class="control">
-                        <input class="input is-large" type="text" maxlength="35" name="capacity" placeholder="capacity" readonly="readonly"
+                        <input class="input is-large" type="text" maxlength="35" name="capacity" placeholder="capacity"
+                               readonly="readonly"
                                autofocus="" value="Capacity: {{ room.capacity }} sits">
                     </div>
                 </div>
 
                 <button class="button is-block is-dark is-large is-fullwidth">Update</button>
+
+
             </form>
             <form method="POST" action="/rooms/delete/{{ room.id }}">
                 <button style="margin-top: 5px" class="button is-block is-danger is-large is-fullwidth">Delete</button>

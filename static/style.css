@@ -1,0 +1,9 @@
+#room-grid-container {
+    display: grid;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.room-grid-element {
+    background-color: red;
+}

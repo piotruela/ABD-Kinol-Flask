@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, url_for, redirect
 from flask_login import login_required
 
 from app import Session
-from service import room_service, show_service, ticket_service
+from service import room_service, show_service, ticket_service, sit_service
 
 rooms = Blueprint('rooms', __name__)
 
@@ -21,9 +21,10 @@ def get_room(room_id):
     session = Session()
     room = room_service.get_room(room_id, session=session)
     upcoming_shows = show_service.get_upcoming_shows_by_room(room, session=session)
+    sits = sit_service.get_sits_by_room(room, session=session)
     for show in upcoming_shows:
         show.left_tickets = ticket_service.count_left(show, session=session)
-    return render_template('room.html', room=room, upcoming_shows=upcoming_shows)
+    return render_template('room.html', room=room, upcoming_shows=upcoming_shows, sits=sits)
 
 
 # todo - siatka z siedzeniami i dodawanie siedzen
