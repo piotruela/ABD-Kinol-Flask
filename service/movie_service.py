@@ -5,13 +5,13 @@ from entity.movie import Movie
 
 
 def get_movies(session=Session()) -> List[Movie]:
-    return session.query(Movie).all()
+    return session.query(Movie).filter_by(archived=False).all()
 
 
 def create(title, minimum_age, genre, length_minutes, description):
     session = Session()
     movie = Movie(title=title, minimum_age=minimum_age, genre=genre, length_minutes=length_minutes,
-                  describe=description)
+                  describe=description, archived=False)
     session.add(movie)
     session.commit()
     return movie
@@ -21,10 +21,10 @@ def get_movie(movie_id, session=Session()):
     return session.query(Movie).filter_by(id=movie_id).first()
 
 
-def delete(movie_id):
+def archive_switch(movie_id):
     session = Session()
     movie = session.query(Movie).filter_by(id=movie_id).first()
-    session.delete(movie)
+    movie.archived = not movie.archived
     session.commit()
 
 

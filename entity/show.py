@@ -14,6 +14,7 @@ class Show(Base):
     show_date = Column(DateTime)
     room_id = Column(Integer, ForeignKey('room.id'))
     movie_id = Column(Integer, ForeignKey('movie.id'))
+    archived = Column(Boolean)
 
     room = relationship('Room', back_populates='shows')
     movie = relationship('Movie', back_populates='shows')

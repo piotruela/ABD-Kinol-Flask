@@ -64,8 +64,8 @@ def update_show(show_id):
     return redirect(url_for('shows.get_show', show_id=show.id))
 
 
-@shows.route('/shows/delete/<show_id>', methods=['POST'])
+@shows.route('/shows/archive_switch/<show_id>', methods=['POST'])
 @login_required
-def delete_show(show_id):
-    show_service.delete(show_id)
-    return redirect(url_for('shows.get_shows'))
+def archive_show_switch(show_id):
+    show_service.archive_switch(show_id)
+    return redirect(url_for('shows.get_show', show_id=show_id))

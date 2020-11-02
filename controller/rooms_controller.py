@@ -48,8 +48,8 @@ def create_room_post():
     return redirect(url_for('rooms.get_room', room_id=room.id))
 
 
-@rooms.route('/rooms/delete/<room_id>', methods=['POST'])
+@rooms.route('/rooms/archive_switch/<room_id>', methods=['POST'])
 @login_required
-def delete_room(room_id):
-    room_service.delete(room_id)
-    return redirect(url_for('rooms.get_rooms'))
+def archive_room_switch(room_id):
+    room_service.archive_switch(room_id)
+    return redirect(url_for('rooms.get_room', room_id=room_id))

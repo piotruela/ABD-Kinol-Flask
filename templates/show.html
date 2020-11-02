@@ -149,8 +149,14 @@
 
                 <button class="button is-block is-dark is-large is-fullwidth">Update</button>
             </form>
-            <form method="POST" action="/shows/delete/{{ show.id }}">
-                <button style="margin-top: 5px" class="button is-block is-danger is-large is-fullwidth">Delete</button>
+            <form method="POST" action="/shows/archive_switch/{{ show.id }}">
+                {% if not show.archived %}
+                    <button style="margin-top: 5px" class="button is-block is-danger is-large is-fullwidth">Archive
+                    </button>
+                {% else %}
+                    <button style="margin-top: 5px" class="button is-block is-danger is-large is-fullwidth">Unarchive
+                    </button>
+                {% endif %}
             </form>
         </div>
     </div>

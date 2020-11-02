@@ -13,7 +13,7 @@
             {% for sit in sits %}
                 var row = ({{ sit.row }})
                 var column = ({{ sit.sit }})
-                var room_grid_sit = document.getElementById(`room-grid-container-element-${row+1}-${column+1}`)
+                var room_grid_sit = document.getElementById(`room-grid-container-element-${row + 1}-${column + 1}`)
                 decorateGridRoomElementSit(room_grid_sit)
 
             {% endfor %}
@@ -82,8 +82,14 @@
                 </div>
             </div>
 
-            <form method="POST" action="/rooms/delete/{{ room.id }}">
-                <button style="margin-top: 5px" class="button is-block is-danger is-large is-fullwidth">Delete</button>
+            <form method="POST" action="/rooms/archive_switch/{{ room.id }}">
+                {% if not room.archived %}
+                    <button style="margin-top: 5px" class="button is-block is-danger is-large is-fullwidth">Archive
+                    </button>
+                {% else %}
+                    <button style="margin-top: 5px" class="button is-block is-danger is-large is-fullwidth">Unarchive
+                    </button>
+                {% endif %}
             </form>
         </div>
     </div>

@@ -3,7 +3,7 @@ from entity.room import Room
 
 
 def get_rooms(session=Session()):
-    return session.query(Room).all()
+    return session.query(Room).filter_by(archived=False).all()
 
 
 def get_room(room_id, session=Session()):
@@ -12,15 +12,15 @@ def get_room(room_id, session=Session()):
 
 def create(number, rows, columns, sits):
     session = Session()
-    room = Room(number=number, capacity=len(sits), rows=rows, columns=columns)
+    room = Room(number=number, capacity=len(sits), rows=rows, columns=columns, archived=False)
     room.sits = sits
     session.add(room)
     session.commit()
     return room
 
 
-def delete(room_id):
+def archive_switch(room_id):
     session = Session()
     room = get_room(room_id, session)
-    session.delete(room)
+    room.archived = not room.archived
     session.commit()
