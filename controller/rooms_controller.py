@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, url_for, redirect
 from flask_login import login_required
 
 from app import Session
+from entity.sit import Sit
 from service import room_service, show_service, ticket_service, sit_service
 
 rooms = Blueprint('rooms', __name__)
@@ -14,7 +15,6 @@ def get_rooms():
     return render_template('rooms.html', rooms=rooms_list)
 
 
-# todo - dodac jeszcze siatke z siedzeniami i dodawanie siedzen
 @rooms.route('/rooms/<room_id>')
 @login_required
 def get_room(room_id):
@@ -27,19 +27,24 @@ def get_room(room_id):
     return render_template('room.html', room=room, upcoming_shows=upcoming_shows, sits=sits)
 
 
-# todo - siatka z siedzeniami i dodawanie siedzen
 @rooms.route('/rooms/create')
 @login_required
 def create_room():
     return render_template('rooms-create.html')
 
 
-# todo- siatka z siedzeniami i dodawanie siedzen
 @rooms.route('/rooms/create', methods=['POST'])
 @login_required
 def create_room_post():
     number = request.form.get('number')
-    room = room_service.create(number)
+    rows = request.form.get('rows')
+    columns = request.form.get('columns')
+    sits = []
+    for k, v in request.form.items():
+        if k.startswith("sit-"):
+            row_column = k.replace('sit-', '').split('-')
+            sits.append(Sit(row=row_column[0], sit=row_column[1]))
+    room = room_service.create(number, rows, columns, sits)
     return redirect(url_for('rooms.get_room', room_id=room.id))
 
 

@@ -29,6 +29,8 @@ function createRoomSitsView(room_columns, room_rows, hover) {
             }
             room_grid_element.sitIterator = `${column + 1}`
             grid_container.appendChild(room_grid_element)
+            room_grid_element.row=row
+            room_grid_element.column=column
         }
     }
 }

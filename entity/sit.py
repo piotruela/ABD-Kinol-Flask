@@ -16,4 +16,4 @@ class Sit(Base):
     room = relationship('Room', back_populates='sits')
 
 
-Room.sits = relationship('Sit', order_by=Sit.id, back_populates='room')
+Room.sits = relationship('Sit', order_by=Sit.id, back_populates='room', cascade="all, delete-orphan")

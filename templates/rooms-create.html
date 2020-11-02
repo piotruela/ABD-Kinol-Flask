@@ -2,6 +2,32 @@
 
 {% block content %}
     <script>
+        function prepareCreateRequest() {
+            const form = document.getElementById("create-room-form");
+
+            const rows = document.createElement("INPUT");
+            rows.name = "rows"
+            rows.value = document.getElementById("generate-room-rows").value
+            rows.type="hidden"
+            form.appendChild(rows)
+
+            const columns = document.createElement("INPUT");
+            columns.name = "columns"
+            columns.value = document.getElementById("generate-room-columns").value
+            columns.type="hidden"
+            form.appendChild(columns)
+
+            Array.from(document.getElementById("room-grid-container").children)
+                .filter(value => value.chosen === true)
+                .forEach(value => {
+                    const sit = document.createElement("INPUT");
+                    sit.name=`sit-${value.row}-${value.column}`
+                    sit.value=true
+                    sit.type="hidden"
+                    form.appendChild(sit)
+                })
+        }
+
         document.addEventListener("DOMContentLoaded", function () {
             paintLegend()
         });
@@ -18,7 +44,9 @@
                         value.onclick = function () {
                             switchRoomSitClick(value)
                         }
+                        value.chosen = true
                     })
+                document.getElementById("room-create-form-capacity").value = columns * rows
             }
         }
 
@@ -26,9 +54,13 @@
             if (div.decorated) {
                 removeDecorationGridRoomElementSit(div)
                 removeDecoratedGridRoomElementSitHover(div);
+                document.getElementById("room-create-form-capacity").value = parseInt(document.getElementById("room-create-form-capacity").value) - 1
+                div.chosen = false
             } else {
                 decorateGridRoomElementSit(div)
                 addDecoratedRoomElementSitHover(div);
+                document.getElementById("room-create-form-capacity").value = parseInt(document.getElementById("room-create-form-capacity").value) + 1
+                div.chosen = true
             }
         }
 
@@ -42,7 +74,6 @@
             legend_sit_taken.style.marginRight = 'auto'
             legend_sit_taken.style.position = 'relative'
             legend_div.appendChild(legend_sit_taken)
-            console.log(legend_div)
             const legend_sit_taken_description = document.createElement('div')
             legend_sit_taken_description.style.position = 'relative'
             legend_sit_taken_description.innerText = ' - means that sit will be available to reserve during buying ticket and sit num will be X'
@@ -62,7 +93,6 @@
             legend_sit_not_available.style.marginRight = 'auto'
             legend_sit_not_available.style.position = 'relative'
             legend_div.appendChild(legend_sit_not_available)
-            console.log(legend_div)
             const legend_sit_not_available_description = document.createElement('div')
             legend_sit_not_available_description.style.position = 'relative'
             legend_sit_not_available_description.innerText = ' - means that sit wont be available to reserve during buying ticket and unavailable sit number is X'
@@ -74,11 +104,11 @@
             legend_sit_not_available_description.style.bottom = '-12px'
             legend_sit_not_available_description.style.width = '700px'
             removeDecorationGridRoomElementSit(legend_sit_not_available)
-            legend_sit_not_available.innerText='X'
+            legend_sit_not_available.innerText = 'X'
             legend_sit_taken.appendChild(legend_sit_not_available_description)
-
-
         }
+
+
     </script>
     <div class="column is-fullwidth">
         <div class="box">
@@ -126,15 +156,23 @@
             {% endwith %}
 
 
-            <form method="POST" action="/rooms/create">
+            <form id="create-room-form" method="POST" action="/rooms/create" onsubmit="prepareCreateRequest()">
                 <div class="field">
                     <div class="control">
                         <input class="input is-large" type="text" maxlength="35" name="number" placeholder="number"
                                autofocus="">
                     </div>
                 </div>
+                <div class="field">
+                    <div class="control">
+                        <input id="room-create-form-capacity" class="input is-large" type="text" maxlength="35"
+                               title="Capacity"
+                               name="capacity" placeholder="capacity" readonly="readonly" value="0">
+                    </div>
+                </div>
 
-                <button class="button is-block is-dark is-large is-fullwidth">Create</button>
+                <button id="create-room-submit-button" class="button is-block is-dark is-large is-fullwidth">Create
+                </button>
             </form>
         </div>
     </div>

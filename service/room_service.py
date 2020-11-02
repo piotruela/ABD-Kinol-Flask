@@ -10,9 +10,10 @@ def get_room(room_id, session=Session()):
     return session.query(Room).filter_by(id=room_id).first()
 
 
-def create(number):
+def create(number, rows, columns, sits):
     session = Session()
-    room = Room(number=number, capacity=15)
+    room = Room(number=number, capacity=len(sits), rows=rows, columns=columns)
+    room.sits = sits
     session.add(room)
     session.commit()
     return room

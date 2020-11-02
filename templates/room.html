@@ -4,7 +4,7 @@
     <script>
 
         document.addEventListener("DOMContentLoaded", function () {
-            createRoomSitsView(({{ room.columns }}), ({{ room.rows }}))
+            createRoomSitsView(({{ room.columns }}), ({{ room.rows }}), false)
             paintExistingRoomSits()
             paintLegend()
         });
@@ -13,7 +13,7 @@
             {% for sit in sits %}
                 var row = ({{ sit.row }})
                 var column = ({{ sit.sit }})
-                var room_grid_sit = document.getElementById(`room-grid-container-element-${row}-${column}`)
+                var room_grid_sit = document.getElementById(`room-grid-container-element-${row+1}-${column+1}`)
                 decorateGridRoomElementSit(room_grid_sit)
 
             {% endfor %}
