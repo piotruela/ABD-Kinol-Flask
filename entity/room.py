@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer
+from sqlalchemy import Column, Integer, Boolean
 
 from app import Base
 
@@ -11,3 +11,4 @@ class Room(Base):
     number = Column(Integer)
     rows = Column(Integer)
     columns = Column(Integer)
+    archived = Column(Boolean)

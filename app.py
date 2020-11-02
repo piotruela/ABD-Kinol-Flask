@@ -38,6 +38,10 @@ if __name__ == 'app':
     app.register_blueprint(shows_blueprint)
     from controller.rooms_controller import rooms as rooms_blueprint
     app.register_blueprint(rooms_blueprint)
+    from controller.employees_controller import employees as employees_blueprint
+    app.register_blueprint(employees_blueprint)
+    from controller.ticket_controller import tickets as tickets_blueprint
+    app.register_blueprint(tickets_blueprint)
 
 
     login_manager = LoginManager()

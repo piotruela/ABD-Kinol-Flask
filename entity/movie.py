@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Boolean
 
 from app import Base
 
@@ -12,3 +12,4 @@ class Movie(Base):
     minimum_age = Column(Integer)
     describe = Column(String)
     title = Column(String)
+    archived = Column(Boolean)

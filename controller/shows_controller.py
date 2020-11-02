@@ -28,6 +28,11 @@ def get_show(show_id):
     show = show_service.get_show(show_id, session)
     movies = movie_service.get_movies(session)
     rooms = room_service.get_rooms(session)
+    sits = show.room.sits
+    for ticket in ticket_service.get_by_show_and_sits(show, sits, session=session):
+        for sit in sits:
+            if ticket.sit_id == sit.id:
+                sit.ticket = ticket
     return render_template('show.html', show=show, movies=movies, rooms=rooms)
 
 
@@ -59,8 +64,8 @@ def update_show(show_id):
     return redirect(url_for('shows.get_show', show_id=show.id))
 
 
-@shows.route('/shows/delete/<show_id>', methods=['POST'])
+@shows.route('/shows/archive_switch/<show_id>', methods=['POST'])
 @login_required
-def delete_show(show_id):
-    show_service.delete(show_id)
-    return redirect(url_for('shows.get_shows'))
+def archive_show_switch(show_id):
+    show_service.archive_switch(show_id)
+    return redirect(url_for('shows.get_show', show_id=show_id))

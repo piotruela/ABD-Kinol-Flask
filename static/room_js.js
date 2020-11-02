@@ -24,13 +24,13 @@ function createRoomSitsView(room_columns, room_rows, hover) {
         grid_container.appendChild(pre_row_grid_element)
         for (let column = 0; column < room_columns; column++) {
             const room_grid_element = createBaseGridRoomElement(row + 1, column + 1)
-            if(hover === true){
+            if (hover === true) {
                 addDecoratedRoomElementSitHover(room_grid_element)
             }
             room_grid_element.sitIterator = `${column + 1}`
             grid_container.appendChild(room_grid_element)
-            room_grid_element.row=row
-            room_grid_element.column=column
+            room_grid_element.row = row
+            room_grid_element.column = column
         }
     }
 }
@@ -46,13 +46,21 @@ function createBaseGridRoomElement(row, column, element_dimension_px) {
 }
 
 function decoratedGridRoomOnMouseOver(room_grid_element) {
-    room_grid_element.style.backgroundColor="white"
+    room_grid_element.style.backgroundColor = "white"
     room_grid_element.style.color = "black"
 }
 
 function decoratedGridRoomOnMouseOut(room_grid_element) {
-    room_grid_element.style.backgroundColor = "#363636"
-    room_grid_element.style.color = "white"
+    if (room_grid_element.not_hover_out_background_color) {
+        room_grid_element.style.backgroundColor = room_grid_element.not_hover_out_background_color
+    } else {
+        room_grid_element.style.backgroundColor = "#363636"
+    }
+    if (room_grid_element.not_hover_out_color) {
+        room_grid_element.style.color = room_grid_element.not_hover_out_color
+    } else {
+        room_grid_element.style.color = "white"
+    }
 }
 
 function addDecoratedRoomElementSitHover(room_grid_element) {
@@ -69,7 +77,7 @@ function decorateGridRoomElementSit(room_grid_element) {
     room_grid_element.style.border = "1px solid blue"
     room_grid_element.style.color = "white"
     room_grid_element.innerText = room_grid_element.sitIterator
-    room_grid_element.decorated=true
+    room_grid_element.decorated = true
 }
 
 function notDecoratedGridRoomOnMouseOver(room_grid_element) {
@@ -95,5 +103,5 @@ function removeDecorationGridRoomElementSit(room_grid_element) {
     room_grid_element.style.backgroundColor = "white"
     room_grid_element.style.color = "black"
     room_grid_element.innerText = room_grid_element.sitIterator
-    room_grid_element.decorated=false
+    room_grid_element.decorated = false
 }

@@ -55,8 +55,8 @@ def update_movie(movie_id):
     return redirect(url_for('movies.get_movie', movie_id=movie.id))
 
 
-@movies.route('/movies/delete/<movie_id>', methods=['POST'])
+@movies.route('/movies/archive_switch/<movie_id>', methods=['POST'])
 @login_required
-def delete_movie(movie_id):
-    movie_service.delete(movie_id)
-    return redirect(url_for('movies.get_movies'))
+def archive_movie_switch(movie_id):
+    movie_service.archive_switch(movie_id)
+    return redirect(url_for('movies.get_movie', movie_id=movie_id))

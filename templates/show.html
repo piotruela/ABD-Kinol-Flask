@@ -10,8 +10,94 @@
                 }
             );
         });
+
+        function removeActionFromNotExistingRoomSits() {
+            Array.from(document.getElementById("room-grid-container").children)
+                .filter(value => !(value.id.includes("room-grid-row-iterator-")))
+                .filter(value => !value.for_show)
+                .forEach(value => {
+                    value.onmouseover = function () {
+                    }
+                    value.onmouseout = function () {
+                    }
+                })
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            createRoomSitsView(({{ show.room.columns }}), ({{ show.room.rows }}), true)
+            paintExistingRoomSits()
+            paintLegend()
+            removeActionFromNotExistingRoomSits()
+        });
+
+        function toExistingTicket(id) {
+            window.location = '/tickets/' + id
+        }
+
+        function toCreateTicket(sit_id) {
+            window.location = `/tickets/create?show_id={{ show.id }}&sit_id=${sit_id}`
+        }
+
+        function paintExistingRoomSits() {
+            {% for sit in show.room.sits %}
+                var row = ({{ sit.row }})
+                var column = ({{ sit.sit }})
+                var room_grid_sit = document.getElementById(`room-grid-container-element-${row + 1}-${column + 1}`)
+                decorateGridRoomElementSit(room_grid_sit)
+                room_grid_sit.style.cursor = "pointer";
+                room_grid_sit.for_show = true
+                {% if sit.ticket %}
+                    room_grid_sit.style.backgroundColor = 'red'
+                    room_grid_sit.not_hover_out_background_color = 'red'
+                    room_grid_sit.not_hover_out_color = 'white'
+                    room_grid_sit.onclick = function () {
+                        toExistingTicket(({{ sit.ticket.id}}))
+                    }
+                {% else %}
+                    room_grid_sit.onclick = function () {
+                        toCreateTicket(({{ sit.id}}))
+                    }
+                {% endif %}
+            {% endfor %}
+        }
+
+        function paintLegend() {
+            const legend_div = document.getElementById("room-legend");
+            const legend_sit_taken = createBaseGridRoomElement(99, 99, final_element_dimension_px);
+            decorateGridRoomElementSit(legend_sit_taken)
+            legend_sit_taken.innerText = 'X'
+            legend_sit_taken.style.marginLeft = 'auto'
+            legend_sit_taken.style.marginRight = 'auto'
+            legend_sit_taken.style.position = 'relative'
+            legend_sit_taken.style.backgroundColor = 'red'
+            legend_div.appendChild(legend_sit_taken)
+            const legend_sit_taken_description = document.createElement('div')
+            legend_sit_taken_description.style.position = 'relative'
+            legend_sit_taken_description.innerText = ' - busy'
+            legend_sit_taken_description.style.color = 'black'
+            legend_sit_taken_description.style.marginLeft = "0px"
+            legend_sit_taken_description.style.marginRight = "0px"
+            legend_sit_taken_description.style.padding = "0px"
+            legend_sit_taken_description.style.left = '-260px'
+            legend_sit_taken_description.style.bottom = '12px'
+            legend_sit_taken_description.style.width = '700px'
+            legend_sit_taken.appendChild(legend_sit_taken_description)
+        }
     </script>
+
+    <div class="column is-fullwidth">
+        <div class="box">
+            <div id="room-grid-container">
+            </div>
+            <div style="height: 100px"></div>
+            <div style="width: 500px; margin-left: auto; margin-right: auto" id="room-legend">
+            </div>
+        </div>
+    </div>
+
+
     <div class="column is-4 is-offset-4">
+
         <h3 class="title">Show "{{ show.movie.title }}"</h3>
         <div class="box">
 
@@ -39,9 +125,12 @@
                         <select class="input is-large" style="margin-bottom: 10px" name="room">
                             {% for room in rooms %}
                                 {% if room.id == show.room.id %}
-                                    <option selected="selected" value="{{ room.id }}">No. {{ room.number }} ({{ room.capacity }} sits)</option>
+                                    <option selected="selected" value="{{ room.id }}">No. {{ room.number }}
+                                        ({{ room.capacity }} sits)
+                                    </option>
                                 {% else %}
-                                    <option value="{{ room.id }}">No. {{ room.number }} ({{ room.capacity }} sits)</option>
+                                    <option value="{{ room.id }}">No. {{ room.number }} ({{ room.capacity }} sits)
+                                    </option>
                                 {% endif %}
                             {% endfor %}
                         </select>
@@ -60,8 +149,14 @@
 
                 <button class="button is-block is-dark is-large is-fullwidth">Update</button>
             </form>
-            <form method="POST" action="/shows/delete/{{ show.id }}">
-                <button style="margin-top: 5px" class="button is-block is-danger is-large is-fullwidth">Delete</button>
+            <form method="POST" action="/shows/archive_switch/{{ show.id }}">
+                {% if not show.archived %}
+                    <button style="margin-top: 5px" class="button is-block is-danger is-large is-fullwidth">Archive
+                    </button>
+                {% else %}
+                    <button style="margin-top: 5px" class="button is-block is-danger is-large is-fullwidth">Unarchive
+                    </button>
+                {% endif %}
             </form>
         </div>
     </div>
