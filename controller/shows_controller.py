@@ -20,7 +20,7 @@ def get_shows():
         show.left_tickets = ticket_service.count_left(show, session=session)
     return render_template('shows.html', shows=shows_list, for_date=date)
 
-
+#todo listowanie miejsc i kupowanei biletow
 @shows.route('/shows/<show_id>')
 @login_required
 def get_show(show_id):

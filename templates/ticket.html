@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="column is-4 is-offset-4">
+        <h3 class="title">Ticket for {{ ticket.show.movie.title }} at room {{ ticket.show.room.number }}
+            (row: {{ ticket.sit.row }},
+            sit: {{ ticket.sit.sit }})</h3>
+        <div class="box">
+
+            <form method="POST" action="/tickets/update/{{ ticket.id }}">
+                <div class="field">
+                    <div class="control">
+                        <input class="input is-large" type="number" min="0" name="price" placeholder="Price"
+                               value="{{ ticket.price }}"
+                               autofocus="">
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <select class="input is-large" name="was_paid">
+                            {% if ticket.was_paid == True %}
+                                <option selected="selected" value="true">Was paid</option>
+                                <option value="false">Not paid yet</option>
+                            {% else %}
+                                <option value="true">Was paid</option>
+                                <option selected="selected" value="false">Not paid yet</option>
+                            {% endif %}
+                        </select>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <input class="input is-large" type="text" name="discount_code" placeholder="Discount code"
+                               value="{{ ticket.discount_code }}">
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <input class="input is-large" type="text" name="ticket_number" readonly="readonly"
+                               value="Ticket no. {{ ticket.ticket_number }}">
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <input class="input is-large" type="text" name="sold_by" readonly="readonly"
+                               value="Sold by: {{ ticket.employee.person.first_name }} {{ ticket.employee.person.last_name }}">
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <input class="input is-large" type="text" name="show_details" readonly="readonly"
+                               value="Show at: {{ ticket.show.show_date }}">
+                    </div>
+                </div>
+                <button class="button is-block is-dark is-large is-fullwidth">Update</button>
+            </form>
+            <form method="POST" action="/tickets/delete/{{ ticket.id }}">
+                <button style="margin-top: 5px" class="button is-block is-danger is-large is-fullwidth">Delete</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

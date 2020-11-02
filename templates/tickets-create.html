@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="column is-4 is-offset-4">
+        <h3 class="title">Ticket for {{ show.movie.title }} at room {{ show.room.number }} (row: {{ sit.row }},
+            sit: {{ sit.sit }})</h3>
+        <div class="box">
+
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="notification is-danger">
+                        {{ messages[0] }}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="/tickets">
+                <div class="field">
+                    <div class="control">
+                        <input class="input is-large" type="number" min="0" name="price" placeholder="Price"
+                               autofocus="">
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <select class="input is-large" name="was_paid">
+                            <option selected="selected" value="true">Was paid</option>
+                            <option value="false">Not paid yet</option>
+                        </select>
+                    </div>
+                </div>
+                <input type="hidden" name="logged_user_id" value="{{ current_user.id }}">
+                <input type="hidden" name="sit_id" value="{{ request.args.get('sit_id') }}">
+                <input type="hidden" name="show_id" value="{{ request.args.get('show_id') }}">
+                <div class="field">
+                    <div class="control">
+                        <input class="input is-large" type="text" name="discount_code" placeholder="Discount code">
+                    </div>
+                </div>
+                <button class="button is-block is-dark is-large is-fullwidth">Create</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
