@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <nav class="level">
+        <div class="level-left"></div>
+        <div class="level-right">
+            <p class="level-item"><a class="button is-dark" style="width: 50px" onclick="window.location='/rooms/create'">+</a></p>
+        </div>
+    </nav>
+
+    <div style="margin: 10%"></div>
+
+    <div class="tile is-ancestor is-12 is-offset-4">
+        <div class="tile is-vertical">
+
+            {% for room in rooms %}
+                <div class="tile">
+                    <div class="tile is-parent">
+                        <div class="tile is-child notification is-6">
+                            <p class="title"><b>No.{{ room.number }}</b></p>
+                        </div>
+                    </div>
+                    <div class="tile is-parent">
+                        <div class="tile is-child notification is-6">
+                            <p class="title">{{ room.capacity }} sits</p>
+                        </div>
+                    </div>
+
+                    <div class="tile is-parent">
+                        <div class="tile is-child notification is-2">
+                            <button class="button is-dark" onclick="nav_redirect('/rooms/' + {{ room.id }})">go</button>
+                        </div>
+                    </div>
+                </div>
+
+            {% endfor %}
+        </div>
+
+    </div>
+
+{% endblock %}

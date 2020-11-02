@@ -45,7 +45,13 @@ def update(show_id, movie_id, room_id, date_time):
     return show
 
 
-def get_upcoming_shows(movie, session):
+def get_upcoming_shows_by_movie(movie, session):
     date_time_start = datetime.combine(datetime.now().date(), datetime.min.time())
     return session.query(Show).filter(
         and_(Show.show_date.between(date_time_start, datetime.max), Show.movie_id == movie.id)).all()
+
+
+def get_upcoming_shows_by_room(room, session):
+    date_time_start = datetime.combine(datetime.now().date(), datetime.min.time())
+    return session.query(Show).filter(
+        and_(Show.show_date.between(date_time_start, datetime.max), Show.room_id == room.id)).all()
