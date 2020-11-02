@@ -20,7 +20,7 @@ def get_shows():
         show.left_tickets = ticket_service.count_left(show, session=session)
     return render_template('shows.html', shows=shows_list, for_date=date)
 
-#todo listowanie miejsc i kupowanei biletow
+
 @shows.route('/shows/<show_id>')
 @login_required
 def get_show(show_id):
@@ -28,6 +28,11 @@ def get_show(show_id):
     show = show_service.get_show(show_id, session)
     movies = movie_service.get_movies(session)
     rooms = room_service.get_rooms(session)
+    sits = show.room.sits
+    for ticket in ticket_service.get_by_show_and_sits(show, sits, session=session):
+        for sit in sits:
+            if ticket.sit_id == sit.id:
+                sit.ticket = ticket
     return render_template('show.html', show=show, movies=movies, rooms=rooms)
 
 

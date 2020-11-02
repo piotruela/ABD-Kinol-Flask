@@ -1,3 +1,5 @@
+from sqlalchemy import and_
+
 from app import Session
 from entity.ticket import Ticket
 from service import show_service, sit_service, employee_service, ticket_number_service
@@ -42,3 +44,8 @@ def update(ticket_id, was_paid, discount_code, price):
 def delete(ticket, session=Session()):
     session.delete(ticket)
     session.commit()
+
+
+def get_by_show_and_sits(show, sits, session=Session()):
+    sits_ids = [sit.id for sit in sits]
+    return session.query(Ticket).filter(and_(Ticket.show == show, Ticket.sit_id.in_(sits_ids)))
