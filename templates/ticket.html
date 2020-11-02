@@ -1,7 +1,69 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <script>
+        function paintTicketSit() {
+            var column = ({{ ticket.sit.sit }})
+            var row = ({{ ticket.sit.row }})
+            var taken_sit = document.getElementById(`room-grid-container-element-${row + 1}-${column + 1}`)
+            taken_sit.style.backgroundColor = 'red'
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            createRoomSitsView(({{ ticket.show.room.columns }}), ({{ ticket.show.room.rows }}), false)
+            paintExistingRoomSits()
+            paintLegend()
+            paintTicketSit()
+        });
+
+        function paintExistingRoomSits() {
+            {% for sit in ticket.show.room.sits %}
+                var row = ({{ sit.row }})
+                var column = ({{ sit.sit }})
+                var room_grid_sit = document.getElementById(`room-grid-container-element-${row + 1}-${column + 1}`)
+                decorateGridRoomElementSit(room_grid_sit)
+
+            {% endfor %}
+        }
+
+        function paintLegend() {
+            const legend_div = document.getElementById("room-legend");
+            const legend_sit_taken = createBaseGridRoomElement(99, 99, final_element_dimension_px);
+            decorateGridRoomElementSit(legend_sit_taken)
+            legend_sit_taken.innerText = 'X'
+            legend_sit_taken.style.marginLeft = 'auto'
+            legend_sit_taken.style.marginRight = 'auto'
+            legend_sit_taken.style.position = 'relative'
+            legend_sit_taken.style.backgroundColor = 'red'
+            legend_div.appendChild(legend_sit_taken)
+            const legend_sit_taken_description = document.createElement('div')
+            legend_sit_taken_description.style.position = 'relative'
+            legend_sit_taken_description.innerText = ' - for ticket sit'
+            legend_sit_taken_description.style.color = 'black'
+            legend_sit_taken_description.style.marginLeft = "0px"
+            legend_sit_taken_description.style.marginRight = "0px"
+            legend_sit_taken_description.style.padding = "0px"
+            legend_sit_taken_description.style.left = '-260px'
+            legend_sit_taken_description.style.bottom = '12px'
+            legend_sit_taken_description.style.width = '700px'
+            legend_sit_taken.appendChild(legend_sit_taken_description)
+        }
+
+    </script>
+
+    <div class="column is-fullwidth">
+        <div class="box">
+            <div id="room-grid-container">
+            </div>
+            <div style="height: 100px"></div>
+            <div style="width: 500px; margin-left: auto; margin-right: auto" id="room-legend">
+            </div>
+        </div>
+    </div>
+
     <div class="column is-4 is-offset-4">
+
+
         <h3 class="title">Ticket for {{ ticket.show.movie.title }} at room {{ ticket.show.room.number }}
             (row: {{ ticket.sit.row }},
             sit: {{ ticket.sit.sit }})</h3>

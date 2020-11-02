@@ -19,7 +19,6 @@ def create_ticket():
     return render_template('tickets-create.html', show=show, sit=sit)
 
 
-# todo - pokazywanie gdzie siedzi, kto sprzedal itd
 @tickets.route('/tickets/<ticket_id>')
 @login_required
 def get_ticket(ticket_id):
