@@ -41,7 +41,8 @@
                 <div id="navbarMenuHeroA" class="navbar-menu">
                     <div class="navbar-end">
                         {% if current_user.is_authenticated %}
-                            <span class="navbar-item">{{ current_user.first_name + ' ' + current_user.last_name }}</span>
+                            <a class="navbar-item" href="/employees/current">
+                                <span>{{ current_user.first_name + ' ' + current_user.last_name }}</span></a>
                         {% endif %}
                         {% if not current_user.is_authenticated %}
                             <a href="{{ url_for('auth.login') }}" class="navbar-item">
