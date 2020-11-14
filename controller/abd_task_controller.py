@@ -1,10 +1,12 @@
 import datetime
 
 from flask import Blueprint, request
-from sqlalchemy import and_
+from sqlalchemy import and_, func, case, extract, literal_column, distinct
 from sqlalchemy.sql import text
 
 from app import Session
+from entity.movie import Movie
+from entity.room import Room
 from entity.show import Show
 from entity.ticket import Ticket
 from entity.ticket_number import TicketNumber
@@ -31,15 +33,17 @@ def compute_task_1():
     return 'task1done ' + str(execution_in_millis)
 
 
+# Task 2:
 # Wyszukaj sale, w których średnie zagęszczenie na seansach grupując po gatunkach filmów i pór seansów
 # (rano, okolice południa, południe, wieczór/noc) było większe niż x%.
-# todo orm
+
 @tasks.route('/tasks/2')
 def compute_task_2():
     zageszczenie = request.args.get('zageszczenie') or 10
 
     start = datetime.datetime.now()
-    wyniki = task_2_sql(zageszczenie)
+    # wyniki = task_2_sql(zageszczenie)
+    wyniki = task_2_orm(zageszczenie)
     end = datetime.datetime.now()
     execution_in_millis = (end - start).total_seconds() * 1000
     return 'task2done ' + str(execution_in_millis) + 'ms ' + str(wyniki)
@@ -135,4 +139,36 @@ def task_2_sql(zageszczenie):
     wynik = []
     for row in result:
         wynik.append((row[0], row[1], row[2], row[3]))
+    return wynik
+
+
+def task_2_orm(zageszczenie):
+    session = Session()
+    result = session.query(
+        (func.count(Ticket.id) * 100.0 / (Room.capacity * func.count(distinct(Show.id)))).label('zageszczenie'),
+        Room.id, Movie.genre,
+        case(
+            [(and_(func.extract('hour', Show.show_date) > 5,
+                   func.extract('hour', Show.show_date) <= 10), literal_column("'rano'")),
+             (and_(func.extract('hour', Show.show_date) > 10,
+                   func.extract('hour', Show.show_date) <= 12), literal_column("'poludnie'")),
+             (and_(func.extract('hour', Show.show_date) > 12,
+                   func.extract('hour', Show.show_date) <= 18), literal_column("'po poludniu'")),
+             (and_(func.extract('hour', Show.show_date) > 18,
+                   func.extract('hour', Show.show_date) <= 20), literal_column("'wieczor'"))],
+            else_=literal_column("'noc'")
+        ).label('pora')) \
+        .select_from(Ticket) \
+        .join(Show, Show.id == Ticket.show_id) \
+        .join(Room, Room.id == Show.room_id) \
+        .join(Movie, Movie.id == Show.movie_id) \
+        .group_by(Room.id, Movie.genre, 'pora').all()
+    "left join show s on ticket.show_id = s.id "
+    "left join room r on s.room_id = r.id "
+    "left join movie m on s.movie_id = m.id "
+    wynik = []
+    for row in result:
+        if float(row[0]) > float(zageszczenie):
+            wynik.append((row[0], row[1], row[2], row[3]))
+
     return wynik
