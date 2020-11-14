@@ -25,12 +25,27 @@ def compute_task_1():
     desired_sit_id = request.args.get('sit_id') or 4
     employee_id = 1
 
-    start = datetime.datetime.now()
-    # task_1_orm(desired_show_id, desired_sit_id, employee_id)
-    task_1_sql(desired_show_id, desired_sit_id, employee_id)
-    end = datetime.datetime.now()
-    execution_in_millis = (end - start).total_seconds() * 1000
-    return 'task1done ' + str(execution_in_millis)
+    executions_in_milis_tab =[]
+    for i in range(0, 5):
+        start = datetime.datetime.now()
+
+        #task_1_orm(desired_show_id, desired_sit_id, employee_id)
+        task_1_sql(desired_show_id, desired_sit_id, employee_id)
+        end = datetime.datetime.now()
+        execution_in_millis = (end - start).total_seconds() * 1000
+
+        session = Session()
+        number = session.execute("select ticket_number.number from ticket_number for update limit 1").fetchall()
+        number = number[0][0] - 1
+        stmt = text("update ticket_number set number = :ticket_number")
+        stmt = stmt.bindparams(ticket_number=number)
+        session.execute(stmt)
+        session.delete(session.query(Ticket).filter_by(sit_id=desired_sit_id).first())
+        session.commit()
+        session.close()
+        executions_in_milis_tab.append(execution_in_millis)
+
+    return 'task1done ' + str(executions_in_milis_tab)
 
 
 # Task 2:
@@ -40,13 +55,15 @@ def compute_task_1():
 @tasks.route('/tasks/2')
 def compute_task_2():
     zageszczenie = request.args.get('zageszczenie') or 10
-
-    start = datetime.datetime.now()
-    # wyniki = task_2_sql(zageszczenie)
-    wyniki = task_2_orm(zageszczenie)
-    end = datetime.datetime.now()
-    execution_in_millis = (end - start).total_seconds() * 1000
-    return 'task2done ' + str(execution_in_millis) + 'ms ' + str(wyniki)
+    executions_in_milis_tab =[]
+    for i in range(0, 5):
+        start = datetime.datetime.now()
+        wyniki = task_2_sql(zageszczenie)
+        #wyniki = task_2_orm(zageszczenie)
+        end = datetime.datetime.now()
+        execution_in_millis = (end - start).total_seconds() * 1000
+        executions_in_milis_tab.append(execution_in_millis)
+    return 'task2done ' + str(execution_in_millis) + 'ms ' + str(wyniki) + str(executions_in_milis_tab)
 
 
 def task_1_orm(desired_show_id, desired_sit_id, employee_id):
@@ -73,6 +90,7 @@ def task_1_orm(desired_show_id, desired_sit_id, employee_id):
                     sit_id=desired_sit_id, show=show, employee_id=employee_id, ticket_number=ticket_number.number)
     session.add(ticket)
     session.commit()
+    session.close()
 
 
 def task_1_sql(desired_show_id, desired_sit_id, employee_id):
@@ -117,12 +135,13 @@ def task_1_sql(desired_show_id, desired_sit_id, employee_id):
 
     session.execute(stmt)
     session.commit()
+    session.close()
 
 
 def task_2_sql(zageszczenie):
     session = Session()
     stmt = text(
-        "select * from (select count(ticket) * 100.0 / (r.capacity * count(distinct s.id)) as zageszczenie,r.id,m.genre, "
+        "select count(ticket) * 100.0 / (r.capacity * count(distinct s.id)) as zageszczenie,r.id,m.genre, "
         "case when ((extract(hour from show_date)) > 5 and (extract(hour from show_date)) <= 10) then 'rano'"
         "when ((extract(hour from show_date)) > 10 and (extract(hour from show_date)) <= 12) then 'poludnie'"
         "when ((extract(hour from show_date)) > 12 and (extract(hour from show_date)) <= 18) then 'po poludniu'"
@@ -132,13 +151,13 @@ def task_2_sql(zageszczenie):
         "left join show s on ticket.show_id = s.id "
         "left join room r on s.room_id = r.id "
         "left join movie m on s.movie_id = m.id "
-        "group by r.id, m.genre, pora) as task2 "
-        "where zageszczenie > :zageszczenie")
-    stmt = stmt.bindparams(zageszczenie=zageszczenie)
+        "group by r.id, m.genre, pora")
     result = session.execute(stmt).fetchall()
     wynik = []
+    session.close()
     for row in result:
-        wynik.append((row[0], row[1], row[2], row[3]))
+        if float(row[0]) > float(zageszczenie):
+            wynik.append((row[0], row[1], row[2], row[3]))
     return wynik
 
 
@@ -167,6 +186,7 @@ def task_2_orm(zageszczenie):
     "left join room r on s.room_id = r.id "
     "left join movie m on s.movie_id = m.id "
     wynik = []
+    session.close()
     for row in result:
         if float(row[0]) > float(zageszczenie):
             wynik.append((row[0], row[1], row[2], row[3]))
