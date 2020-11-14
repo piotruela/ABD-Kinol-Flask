@@ -42,7 +42,8 @@ if __name__ == 'app':
     app.register_blueprint(employees_blueprint)
     from controller.ticket_controller import tickets as tickets_blueprint
     app.register_blueprint(tickets_blueprint)
-
+    from controller.abd_task_controller import tasks as tasks_blueprint
+    app.register_blueprint(tasks_blueprint)
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
